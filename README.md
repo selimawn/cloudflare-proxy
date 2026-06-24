@@ -56,11 +56,10 @@ npm run deploy
 ### Depuis Cloudflare (Workers Builds + Git)
 
 1. Liez ce dépôt dans **Workers & Pages** → **Create** → **Connect to Git**.
-2. Cloudflare lit `wrangler.toml` :
-   - **`main`** : point d’entrée (`src/index.ts`, bundlé par Wrangler/esbuild au deploy).
-   - **`[build].command`** : `npm ci && npm run build` (vérif TypeScript avant le bundle).
-3. Ajoutez le secret **`API_KEY`** dans les paramètres du Worker (voir ci-dessus).
-4. Chaque push sur la branche configurée déclenche build + déploiement.
+2. Cloudflare lit `wrangler.toml` (`main` = `src/index.ts`, bundlé par Wrangler au deploy).
+3. **Build command** (Workers Builds) : `npm run build` — ne pas mettre `[build]` dans `wrangler.toml` (sinon `wrangler deploy` relance la commande et échoue sans `package-lock.json`).
+4. Ajoutez le secret **`API_KEY`** dans les paramètres du Worker (voir ci-dessus).
+5. Chaque push sur la branche configurée déclenche build + déploiement.
 
 Aucun artefact de build séparé n’est requis : le bundle final est produit par `wrangler deploy` à partir du TypeScript.
 

@@ -2,10 +2,7 @@ name = "cloudflare-proxy"
 main = "src/index.ts"
 compatibility_date = "2025-06-24"
 
-# Workers Builds (Git / CI) : commande exécutée avant le bundle Wrangler (esbuild sur main).
-[build]
-command = "npm ci && npm run build"
+# Build CI : configurer dans Workers Builds → "Build command" = npm run build
+# (pas de [build] ici : wrangler deploy le relancerait et doublerait l'install)
 
-# Ne pas commiter la clé : utiliser un secret Cloudflare.
 # wrangler secret put API_KEY
-# Dashboard Workers → Settings → Variables → Secrets → API_KEY
