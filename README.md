@@ -1,8 +1,7 @@
-# cloudflare-proxy
 ## WARNING
 You should not use this as a proxy to take advantage of an address rotation (in order to circumvent the rate-limiting of a third-party service), also avoid scrapping data via this. On the other hand, you can totally use this as an internal proxy to hide the ORIGIN IP address of your server or anything that is part of a legitimate use. Refer to the CloudFlare TOS to determine if your use is legitimate.
 
-
+# cloudflare-proxy
 Worker Cloudflare qui exécute des requêtes **HTTPS** sortantes à partir d’un JSON décrivant la requête (`method`, `headers`, `body`). Utile pour appeler des APIs depuis un environnement où vous ne pouvez pas faire de requêtes directes, ou pour centraliser des appels via un point unique sécurisé par clé API.
 
 ## Prérequis
