@@ -65,9 +65,9 @@ function headersToRecord(headers: Headers): Record<string, string> {
   headers.forEach((value, key) => {
     const lower = key.toLowerCase();
     if (lower === "set-cookie") {
-      out[key] = out[key] ? out[key] + "\n" + value : value;
+      out["set-cookie"] = out["set-cookie"] ? out["set-cookie"] + "\n" + value : value;
     } else {
-      out[key] = value;
+      out[lower] = value;
     }
   });
   return out;
