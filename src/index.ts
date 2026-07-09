@@ -63,7 +63,12 @@ function normalizeBody(
 function headersToRecord(headers: Headers): Record<string, string> {
   const out: Record<string, string> = {};
   headers.forEach((value, key) => {
-    out[key] = value;
+    const lower = key.toLowerCase();
+    if (lower === "set-cookie") {
+      out[key] = out[key] ? out[key] + "\n" + value : value;
+    } else {
+      out[key] = value;
+    }
   });
   return out;
 }
