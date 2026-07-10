@@ -13,6 +13,23 @@ const ALLOWED_METHODS = new Set(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"
 
 const BLOCKED_HOST_SUFFIXES = [".local", ".internal"];
 
+const ALLOWED_ORIGINS = ["https://valmsn.com", "https://www.valmsn.com", "http://localhost:3000", "http://127.0.0.1:3000"];
+
+function corsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("origin");
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    return {
+      "access-control-allow-origin": origin,
+      "access-control-allow-credentials": "true",
+      "access-control-allow-headers": "content-type,x-api-key,authorization,cookie",
+      "access-control-allow-methods": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS",
+      "access-control-max-age": "600",
+      "vary": "origin",
+    };
+  }
+  return {};
+}
+
 function jsonError(status: number, message: string): Response {
   return new Response(JSON.stringify({ error: message }), {
     status,
@@ -166,6 +183,11 @@ async function handleProxy(request: Request, env: Env): Promise<Response> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url);
+    const cors = corsHeaders(request);
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: cors });
+    }
 
     if (pathname === "/" && request.method === "GET") {
       return new Response(
@@ -180,14 +202,21 @@ export default {
             body: "string | object | null (optional)",
           },
         }),
-        { headers: { "content-type": "application/json; charset=utf-8" } },
+        { headers: { ...cors, "content-type": "application/json; charset=utf-8" } },
       );
     }
 
     if (pathname === "/proxy" && request.method === "POST") {
-      return handleProxy(request, env);
+      const response = await handleProxy(request, env);
+      for (const [key, value] of Object.entries(cors)) {
+        response.headers.set(key, value);
+      }
+      return response;
     }
 
-    return jsonError(404, "Not found");
+    return new Response(JSON.stringify({ error: "Not found" }), {
+      status: 404,
+      headers: { ...cors, "content-type": "application/json; charset=utf-8" },
+    });
   },
 };
